@@ -213,3 +213,66 @@ function putMutationObserverOnMainElement (el, callback) {
   // pass in the target node, as well as the observer options
   mainElementObserver.observe(mainElementTarget, mainElementConfig)
 } // end putMutationObserverOnMainElement
+
+
+
+
+function createDifficultyCheckboxes (difficultyList) {
+  const difficultyContainerDiv = createCollapsibleSectionContainer("Required Difficulties", "difficulty")
+
+  const inputListContainer = document.createElement('ul')
+  inputListContainer.setAttribute('class','modal-input-list difficulties')
+  inputListContainer.onclick="event.stopPropagation()"
+  inputListContainer.onmousedown="event.stopPropagation()"
+
+  const requiredDifficulties = getRequiredDifficulties()
+
+  for (const key in difficultyList) {
+    const newListItem = document.createElement('li')
+
+    // const newCount = document.createElement('span')
+    // newCount.setAttribute('class',`modal-post-count`)
+    // newCount.setAttribute('id',`post-count-${key}`)
+    // newCount.innerText = "0"
+
+    const newInput = document.createElement('input')
+    newInput.setAttribute('class',`input-modal-checkbox`)
+    newInput.setAttribute('id',`modal-checkbox-${key}`)
+    newInput.setAttribute('type',`checkbox`)
+    // newInput.setAttribute('data-diff-selector',`${difficultyList[key]}`)
+    newInput.oninput = function(e) {
+      this.setAttribute('value', newInput.checked)
+    }
+
+    if (requiredDifficulties.indexOf(key) !== -1) newInput.checked = true
+
+    const newLabel = document.createElement('label')
+    newLabel.innerText = key
+    // newListItem.append(newCount)
+    newListItem.append(newInput)
+    newListItem.append(newLabel)
+    inputListContainer.append(newListItem)
+  } // end for loop
+
+  putMutationObserverOnInputList(inputListContainer, hidePosts)
+  difficultyContainerDiv.append(inputListContainer)
+} // end createDifficultyCheckboxes
+
+function putMutationObserverOnInputList (el, callback) {
+  let inputEl = el
+  if (!inputEl) return
+
+  // configuration of the observer:
+  const inputElConfig
+    = { attributes: true
+      , characterData: true
+      , subtree: true
+      }
+
+  // create an observer instance
+  const mainElementObserver
+    = new MutationObserver(callback) // end MutationObserver
+
+  // pass in the target node, as well as the observer options
+  mainElementObserver.observe(inputEl, inputElConfig)
+} // end putMutationObserverOnInputList
