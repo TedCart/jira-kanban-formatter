@@ -54,16 +54,15 @@ const footerButtonAttributes
 
 addCustomStyleTag()
 createModalBlock()
-// createHideButton()
-hidePosts()
+hidePieces()
 const bod = document.querySelector('body')
 bod.addEventListener("keydown", elementScrollJump)
 
 setTimeout(
   () => {
     // console.log('Running the setTimeout function!')
-    putMutationObserverOnMainElement(bod, hidePosts)
-    hidePosts()
+    putMutationObserverOnMainElement(bod, hidePieces)
+    hidePieces()
     createButtonsToRemoveKanbanSections()
   }
 , 1500)
@@ -78,12 +77,12 @@ function getHideStatus(string) {
   return JSON.parse(rawJSON)
 }
 
-// function getRequiredDifficulties() {
-//   const rawJSON = localStorage.getItem('requiredDifficulties') || '[]'
-//   return JSON.parse(rawJSON)
-// }
+function getActiveDevelopers() {
+  const rawJSON = localStorage.getItem('activeDevelopers') || '{}'
+  return JSON.parse(rawJSON)
+}
 
-function hidePosts (buttonAttributes) {
+function hidePieces (buttonAttributes) {
   // each through all selectors collections
 
   const hideBadPosts = getHideStatus()
@@ -116,12 +115,22 @@ function hidePosts (buttonAttributes) {
 
   }) // end forEach collectionList
 
-} // end hidePosts function
+  const postElements = document.querySelectorAll(selectors.singlePost)
+  if (!postElements) return
+  postElements.forEach(el => {
+    let targetEl = el
+    for (let i = 0; i < selectors.parentNodeCount; i++)
+      targetEl = targetEl.parentNode
+
+  }); // end postElements forEach
+
+
+} // end hidePieces function
 
 function createHideFunction(string) {
   return () => {
     localStorage.setItem((string || 'isHidingPosts'), JSON.stringify(!getHideStatus(string || 'isHidingPosts')));
-    hidePosts()
+    hidePieces()
   } // end callback function
 } // end createHideFunction
 
