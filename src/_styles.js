@@ -12,6 +12,7 @@ export const addCustomStyleTag = () => {
     /* Increase main font-size */
     .ghx-issue-fields .ghx-summary .ghx-inner {
       font-size: 1.8em;
+      max-height: 10em;
     }
 
     /* Begin flattening header rows */
@@ -58,6 +59,18 @@ export const addCustomStyleTag = () => {
     .aui-tooltip.tipsy {
       font-size:   1.5em;
       line-height: 1.6em;
+    }
+
+    /* Move user icons further up to the left */
+    .ghx-issue .ghx-avatar {
+      position: absolute;
+      right: 2px; /* 10px; */
+      top: 4px; /* 10px; */
+    }
+
+    .ghx-issue.ghx-has-avatar .ghx-issue-fields,
+    .ghx-issue.ghx-has-corner .ghx-issue-fields {
+      padding-right: 30px;
     }
   `
   document.head.appendChild(newStyle)

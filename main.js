@@ -26,8 +26,8 @@ const elementSelector
 
 const hideButtonAttributes
   = { specialId: "custom-hide-button"
-    , hideLabel: "Deactivate Filters"
-    , showLabel: "Activate Filters"
+    , hideLabel: "Disable Hiding"
+    , showLabel: "Enable Hiding"
     , localStorageBooleanLabel: "isHidingPosts"
     , singlePost: "" }
 
@@ -148,8 +148,8 @@ function createHideButton (buttonAttributes) {
       : buttonAttributes.showLabel
   hideButtonElement.className
     = getHideStatus(buttonAttributes.localStorageBooleanLabel)
-      ? 'modal-button hide-button'
-      : 'modal-button live-button'
+      ? 'modal-button live-button'
+      : 'modal-button hide-button'
 
   if (buttonJustCreated) buttonContainerElement.append(hideButtonElement)
 
