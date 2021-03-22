@@ -64,6 +64,7 @@ setTimeout(
     putMutationObserverOnMainElement(bod, hidePieces)
     hidePieces()
     createButtonsToRemoveKanbanSections()
+    createActiveDeveloperCheckboxes()
   }
 , 1500)
 
@@ -77,9 +78,34 @@ function getHideStatus(string) {
   return JSON.parse(rawJSON)
 }
 
+function getNameFromDevIcon (el) {
+  const res
+    = { visible: "NO_NAME"
+      , id: "NO_ID" }
+  if (el.dataset && el.dataset.tooltip) {
+    res.visible = el.dataset.tooltip.split(':')[1].trim()
+    res.id = res.visible.replace(/[^a-zA-Z]+/, '').toLowerCase()
+  }
+  return res
+}
+
 function getActiveDevelopers() {
   const rawJSON = localStorage.getItem('activeDevelopers') || '{}'
-  return JSON.parse(rawJSON)
+  const activeDevelopers = JSON.parse(rawJSON)
+
+  const imgElements = document.querySelectorAll(selectors.singlePost)
+  if (!imgElements) return activeDevelopers
+
+  imgElements.forEach(el => {
+    const nameObj = getNameFromDevIcon(el)
+    activeDevelopers[nameObj.id] = activeDevelopers[nameObj.id] || {}
+    const curDev = activeDevelopers[nameObj.id]
+    curDev.label = nameObj.visible
+    curDev.active = curDev.active === undefined ? true : curDev.active
+
+  }); // end forEach imgElement
+
+  return activeDevelopers
 }
 
 function hidePieces (buttonAttributes) {
@@ -115,14 +141,27 @@ function hidePieces (buttonAttributes) {
 
   }) // end forEach collectionList
 
-  const postElements = document.querySelectorAll(selectors.singlePost)
-  if (!postElements) return
-  postElements.forEach(el => {
+  updateActiveDevelopers()
+  const activeDevelopers = getActiveDevelopers()
+  console.log(JSON.stringify(activeDevelopers, null, 2));
+
+  const cardElements = document.querySelectorAll(selectors.singlePost)
+  if (!cardElements) return
+  cardElements.forEach(el => {
     let targetEl = el
     for (let i = 0; i < selectors.parentNodeCount; i++)
       targetEl = targetEl.parentNode
+    const nameObj = getNameFromDevIcon(el)
 
-  }); // end postElements forEach
+    const isHidden = !(nameObj && nameObj.id && activeDevelopers && activeDevelopers[nameObj.id] && activeDevelopers[nameObj.id]['active'])
+    if (isHidden && hideBadPosts) {
+      targetEl.style = noDisplayString
+    } else {
+      targetEl.style = ""
+      // (targetEl.style || '').replace("display:none;", "")
+    }
+
+  }); // end cardElements forEach
 
 
 } // end hidePieces function
@@ -215,47 +254,50 @@ function putMutationObserverOnMainElement (el, callback) {
 } // end putMutationObserverOnMainElement
 
 
+function createActiveDeveloperCheckboxes () {
+  const activeDevContainerDiv = createCollapsibleSectionContainer("Active Developers", "active-dev")
 
-
-function createDifficultyCheckboxes (difficultyList) {
-  const difficultyContainerDiv = createCollapsibleSectionContainer("Required Difficulties", "difficulty")
-
-  const inputListContainer = document.createElement('ul')
-  inputListContainer.setAttribute('class','modal-input-list difficulties')
+  let inputListContainer = document.querySelector('.modal-input-list.developers')
+  const inputIsNew = !inputListContainer
+  if (!inputListContainer) {
+    inputListContainer = document.createElement('ul')
+  }
+  inputListContainer.innerHTML = ''
+  inputListContainer.setAttribute('class','modal-input-list developers')
   inputListContainer.onclick="event.stopPropagation()"
   inputListContainer.onmousedown="event.stopPropagation()"
 
-  const requiredDifficulties = getRequiredDifficulties()
-
-  for (const key in difficultyList) {
+  const activeDevelopers = getActiveDevelopers()
+  const sortedKeys = Object.keys(activeDevelopers)
+  sortedKeys.sort()
+  sortedKeys.forEach(key => {
     const newListItem = document.createElement('li')
 
-    // const newCount = document.createElement('span')
-    // newCount.setAttribute('class',`modal-post-count`)
-    // newCount.setAttribute('id',`post-count-${key}`)
-    // newCount.innerText = "0"
-
-    const newInput = document.createElement('input')
+    let newInput = document.querySelector(`#modal-checkbox-${key}`)
+    if (newInput) return // don't create duplicates
+    newInput = document.createElement('input')
     newInput.setAttribute('class',`input-modal-checkbox`)
     newInput.setAttribute('id',`modal-checkbox-${key}`)
     newInput.setAttribute('type',`checkbox`)
-    // newInput.setAttribute('data-diff-selector',`${difficultyList[key]}`)
+    // newInput.setAttribute('data-diff-selector',`${devList[key]}`)
     newInput.oninput = function(e) {
       this.setAttribute('value', newInput.checked)
     }
 
-    if (requiredDifficulties.indexOf(key) !== -1) newInput.checked = true
+    newInput.checked = !!activeDevelopers[key]['active']
 
     const newLabel = document.createElement('label')
-    newLabel.innerText = key
+    newLabel.innerText = activeDevelopers[key]['label']
     // newListItem.append(newCount)
     newListItem.append(newInput)
     newListItem.append(newLabel)
     inputListContainer.append(newListItem)
-  } // end for loop
+  }) // end for each
 
-  putMutationObserverOnInputList(inputListContainer, hidePosts)
-  difficultyContainerDiv.append(inputListContainer)
+  if (inputIsNew) {
+    putMutationObserverOnInputList(inputListContainer, hidePieces)
+    activeDevContainerDiv.append(inputListContainer)
+  }
 } // end createDifficultyCheckboxes
 
 function putMutationObserverOnInputList (el, callback) {
@@ -265,14 +307,30 @@ function putMutationObserverOnInputList (el, callback) {
   // configuration of the observer:
   const inputElConfig
     = { attributes: true
-      , characterData: true
+      // , characterData: true
       , subtree: true
       }
 
   // create an observer instance
   const mainElementObserver
-    = new MutationObserver(callback) // end MutationObserver
+    = new MutationObserver(mutations => {callback(); console.log("mutation detected");}) // end MutationObserver
 
   // pass in the target node, as well as the observer options
   mainElementObserver.observe(inputEl, inputElConfig)
-} // end putMutationObserverOnInputList
+} // end createActiveDeveloperCheckboxes
+
+function updateActiveDevelopers () {
+  const listInputElements = document.querySelectorAll('.modal-input-list.developers input[type="checkbox"]')
+  if (!listInputElements) return
+
+  const activeDevelopers = getActiveDevelopers()
+
+  listInputElements.forEach(el => {
+    const key = el.id.replace("modal-checkbox-", '')
+    if (activeDevelopers[key]) {
+      activeDevelopers[key]['active'] = !!el.checked
+    }
+  });
+
+  localStorage.setItem('activeDevelopers', JSON.stringify(activeDevelopers))
+}
