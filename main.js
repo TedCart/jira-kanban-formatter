@@ -89,7 +89,7 @@ function getNameFromDevIcon (el) {
   return res
 }
 
-function getActiveDevelopers() {
+function getActiveDevelopers () {
   const rawJSON = localStorage.getItem('activeDevelopers') || '{}'
   const activeDevelopers = JSON.parse(rawJSON)
 
@@ -143,14 +143,13 @@ function hidePieces (buttonAttributes) {
 
   updateActiveDevelopers()
   const activeDevelopers = getActiveDevelopers()
-  console.log(JSON.stringify(activeDevelopers, null, 2));
+  // console.log(JSON.stringify(activeDevelopers, null, 2));
 
   const cardElements = document.querySelectorAll(selectors.singlePost)
   if (!cardElements) return
   cardElements.forEach(el => {
     let targetEl = el
-    for (let i = 0; i < selectors.parentNodeCount; i++)
-      targetEl = targetEl.parentNode
+    for (let i = 0; i < selectors.parentNodeCount; i++) {targetEl = targetEl.parentNode}
     const nameObj = getNameFromDevIcon(el)
 
     const isHidden = !(nameObj && nameObj.id && activeDevelopers && activeDevelopers[nameObj.id] && activeDevelopers[nameObj.id]['active'])
@@ -313,7 +312,7 @@ function putMutationObserverOnInputList (el, callback) {
 
   // create an observer instance
   const mainElementObserver
-    = new MutationObserver(mutations => {callback(); console.log("mutation detected");}) // end MutationObserver
+    = new MutationObserver(mutations => {callback()}) // end MutationObserver
 
   // pass in the target node, as well as the observer options
   mainElementObserver.observe(inputEl, inputElConfig)
