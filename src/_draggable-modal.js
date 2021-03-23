@@ -255,3 +255,35 @@ function addCustomModalStyleTag () {
   `
   document.head.appendChild(newStyle)
 }
+
+export function createCheckboxWithLabel (options) {
+  options = options || {}
+  const modalBlock = getMainModalElement()
+  if (!modalBlock) return
+
+  let newCheckbox
+  if (options && options.id) newCheckbox = modalBlock.querySelector(`#${options.id}`)
+  if (newCheckbox) {
+    console.log("not creating duplicate input", options.id);
+    return [] // don't create duplicates
+  }
+  newCheckbox = document.createElement('input')
+  newCheckbox.setAttribute('type',`checkbox`)
+  newCheckbox.setAttribute('class',`input-modal-checkbox`)
+  newCheckbox.oninput = function(e) {
+    this.setAttribute('value', newCheckbox.checked)
+  }
+
+  for (const key in options) {
+    if (key === 'label') continue
+    if (key === 'checked') {
+      newCheckbox.checked = options[key]
+    } else {
+      newCheckbox.setAttribute(key, options[key])
+    }
+  } // end for loop
+
+  const newLabel = document.createElement('label')
+  newLabel.innerText = options.label
+  return [newCheckbox, newLabel]
+}

@@ -4,6 +4,7 @@ import  { modalBlockId
         , getMainModalElement
         , createModalBlock
         , createCollapsibleSectionContainer
+        , createCheckboxWithLabel
         } from './src/_draggable-modal.js'
 
 import { selectors }          from './src/selectors.js'
@@ -96,6 +97,7 @@ function getActiveDevelopers () {
 
   const imgElements = document.querySelectorAll(selectors.singlePost)
   if (!imgElements) return activeDevelopers
+  for (const key in activeDevelopers) activeDevelopers[key]['present'] = false
 
   imgElements.forEach(el => {
     const nameObj = getNameFromDevIcon(el)
@@ -103,7 +105,7 @@ function getActiveDevelopers () {
     const curDev = activeDevelopers[nameObj.id]
     curDev.label = nameObj.visible
     curDev.active = curDev.active === undefined ? true : curDev.active
-
+    curDev.present = true
   }); // end forEach imgElement
 
   return activeDevelopers
@@ -260,10 +262,12 @@ function putMutationObserverOnMainElement (el, callback) {
 
 
 function createActiveDeveloperCheckboxes () {
+  const modalBlock = getMainModalElement()
+  if (!modalBlock) return
   const activeDevContainerDiv = createCollapsibleSectionContainer("Active Developers", "active-dev")
 
-  let inputListContainer = document.querySelector('.modal-input-list.developers')
-  const inputIsNew = !inputListContainer
+  let inputListContainer = modalBlock.querySelector('.modal-input-list.developers')
+  const inputListIsNew = !inputListContainer
   if (!inputListContainer) {
     inputListContainer = document.createElement('ul')
   }
@@ -277,29 +281,20 @@ function createActiveDeveloperCheckboxes () {
   sortedKeys.sort()
   sortedKeys.forEach(key => {
     const newListItem = document.createElement('li')
+    // if (!activeDevelopers[key]['present']) return // to hide devs that are in localStorage but not on the current kanban board
 
-    let newInput = document.querySelector(`#modal-checkbox-${key}`)
-    if (newInput) return // don't create duplicates
-    newInput = document.createElement('input')
-    newInput.setAttribute('class',`input-modal-checkbox`)
-    newInput.setAttribute('id',`modal-checkbox-${key}`)
-    newInput.setAttribute('type',`checkbox`)
-    // newInput.setAttribute('data-diff-selector',`${devList[key]}`)
-    newInput.oninput = function(e) {
-      this.setAttribute('value', newInput.checked)
+    const checkboxOptions
+      = { id: `modal-checkbox-${key}`
+        , label: activeDevelopers[key]['label']
+        , checked: !!activeDevelopers[key]['active'] }
+    const newCheckboxElements = createCheckboxWithLabel(checkboxOptions)
+    if (newCheckboxElements.length > 0) {
+      newCheckboxElements.forEach(el => newListItem.append(el))
+      inputListContainer.append(newListItem)
     }
-
-    newInput.checked = !!activeDevelopers[key]['active']
-
-    const newLabel = document.createElement('label')
-    newLabel.innerText = activeDevelopers[key]['label']
-    // newListItem.append(newCount)
-    newListItem.append(newInput)
-    newListItem.append(newLabel)
-    inputListContainer.append(newListItem)
   }) // end for each
 
-  if (inputIsNew) {
+  if (inputListIsNew) {
     putMutationObserverOnInputList(inputListContainer, hidePieces)
     activeDevContainerDiv.append(inputListContainer)
   }
