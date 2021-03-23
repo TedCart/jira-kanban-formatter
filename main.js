@@ -73,7 +73,7 @@ setTimeout(
 // Nothing invoked beneath this point
 // ===========================================================================
 
-function getHideStatus(string) {
+function getHideStatus (string) {
   const rawJSON = localStorage.getItem(string || 'isHidingPosts') || 'false'
   return JSON.parse(rawJSON)
 }
@@ -110,8 +110,11 @@ function getActiveDevelopers () {
 
 function hidePieces (buttonAttributes) {
   // each through all selectors collections
-
+  const mainModalElement = getMainModalElement()
   const hideBadPosts = getHideStatus()
+  hideBadPosts
+    ? mainModalElement.classList.remove('deactivated-filters')
+    : mainModalElement.classList.add('deactivated-filters')
   // console.log(`${hideBadPosts ? 'Hiding' : 'Revealing'} those posts...`)
 
   const collectionList

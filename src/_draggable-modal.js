@@ -173,7 +173,7 @@ function addCustomModalStyleTag () {
     }
     #draggable-modal-block {
       position: fixed;
-      top: 200px;
+      top: 40px;
       left: 10px;
       padding: 15px 5px;
       min-height: 20px;
@@ -190,6 +190,13 @@ function addCustomModalStyleTag () {
       background: #333333BB;
       transition: 0ms;
       opacity: 1;
+    }
+    .deactivated-filters#draggable-modal-block button,
+    .deactivated-filters#draggable-modal-block section {
+      display: none;
+    }
+    .deactivated-filters#draggable-modal-block button:nth-child(1) {
+      display: block;
     }
     .input-modal-checkbox {
       display:inline-block;
