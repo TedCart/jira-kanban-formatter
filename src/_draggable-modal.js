@@ -14,6 +14,11 @@ export function getMainModalElement () {
   return document.querySelector(`#${modalBlockId}`)
 }
 
+const maxListHeight
+  = Math.max( Math.floor(window.innerHeight / 2)
+            , 200
+            )
+
 export function createModalBlock () {
 
   addCustomModalStyleTag()
@@ -185,7 +190,7 @@ function addCustomModalStyleTag () {
       border: solid transparent 1px;
       border-radius: 8px;
       transition: 500ms;
-      opacity: .3;
+      opacity: .2;
     }
     #draggable-modal-block:hover {
       background: #333333BB;
@@ -250,6 +255,8 @@ function addCustomModalStyleTag () {
       transition: visibility 0s lineaer 0.1s, opacity 0.3s ease;
       padding: 0;
       margin: 0;
+      max-height: ${maxListHeight}px;
+      overflow-y: auto;
     }
     .open .modal-input-list {
       display: block;
