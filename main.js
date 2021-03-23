@@ -1,6 +1,6 @@
 // import * as foo from './src/foo.js'
 import  { addCustomStyleTag }         from './src/_styles.js'
-import  { elementScrollJump }         from './src/_wasd-scroll.js'
+// import  { elementScrollJump }         from './src/_wasd-scroll.js'
 import  { modalBlockId
         , getMainModalElement
         , createModalBlock
@@ -56,7 +56,7 @@ addCustomStyleTag()
 createModalBlock()
 hidePieces()
 const bod = document.querySelector('body')
-bod.addEventListener("keydown", elementScrollJump)
+// bod.addEventListener("keydown", elementScrollJump)
 
 setTimeout(
   () => {
@@ -179,6 +179,8 @@ function createHideButton (buttonAttributes) {
     console.log('well shit')
     return
   }
+
+  if (!buttonAttributes.specialId) return
 
   let hideButtonElement = buttonContainerElement.querySelector(`#${buttonAttributes.specialId}`)
   const buttonJustCreated = !hideButtonElement
