@@ -4,7 +4,7 @@ import  { modalBlockId
         , getMainModalElement
         , createModalBlock
         , createCollapsibleSectionContainer
-        , createCheckboxWithLabel
+        , createNewCheckboxListItem
         } from './src/_draggable-modal.js'
 
 import { selectors }          from './src/selectors.js'
@@ -280,18 +280,12 @@ function createActiveDeveloperCheckboxes () {
   const sortedKeys = Object.keys(activeDevelopers)
   sortedKeys.sort()
   sortedKeys.forEach(key => {
-    const newListItem = document.createElement('li')
     // if (!activeDevelopers[key]['present']) return // to hide devs that are in localStorage but not on the current kanban board
-
     const checkboxOptions
       = { id: `modal-checkbox-${key}`
         , label: activeDevelopers[key]['label']
         , checked: !!activeDevelopers[key]['active'] }
-    const newCheckboxElements = createCheckboxWithLabel(checkboxOptions)
-    if (newCheckboxElements.length > 0) {
-      newCheckboxElements.forEach(el => newListItem.append(el))
-      inputListContainer.append(newListItem)
-    }
+    createNewCheckboxListItem(inputListContainer, checkboxOptions)
   }) // end for each
 
   if (inputListIsNew) {

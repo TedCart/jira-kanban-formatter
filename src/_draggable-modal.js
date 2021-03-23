@@ -148,6 +148,7 @@ function addCustomModalStyleTag () {
       display: inline-block;
       cursor: pointer;
       font-size: 1.2em;
+      user-select: none;
     }
     .hide-button {
       margin-bottom:5px;
@@ -207,6 +208,13 @@ function addCustomModalStyleTag () {
       display: inline-block;
       margin: 0 0 0 8px;
       font-size: 1em;
+      transition: 250ms;
+      user-select: none;
+    }
+    .modal-input-list label:hover,
+    .modal-input-list li:hover label {
+      color: #FFF;
+      transition: 50ms;
     }
     .modal-input-list li { margin: 0; }
 
@@ -257,6 +265,10 @@ function addCustomModalStyleTag () {
 }
 
 export function createCheckboxWithLabel (options) {
+  // options example:
+  //      { id: "modal-checkbox-example-id"
+  //      , label: "Example Checkbox"
+  //      , checked: true }
   options = options || {}
   const modalBlock = getMainModalElement()
   if (!modalBlock) return
@@ -277,7 +289,7 @@ export function createCheckboxWithLabel (options) {
   for (const key in options) {
     if (key === 'label') continue
     if (key === 'checked') {
-      newCheckbox.checked = options[key]
+      newCheckbox.checked = !!options[key]
     } else {
       newCheckbox.setAttribute(key, options[key])
     }
@@ -285,5 +297,16 @@ export function createCheckboxWithLabel (options) {
 
   const newLabel = document.createElement('label')
   newLabel.innerText = options.label
+  // newLabel.onclick = function () { newCheckbox.checked = !newCheckbox.checked  }
+  newLabel.onclick = function () { newCheckbox.click()  }
   return [newCheckbox, newLabel]
+}
+
+export function createNewCheckboxListItem (el, options) {
+  const newListItem = document.createElement('li')
+  const newCheckboxElements = createCheckboxWithLabel(options)
+  if (newCheckboxElements.length > 0) {
+    newCheckboxElements.forEach(el => newListItem.append(el))
+    el.append(newListItem)
+  }
 }
