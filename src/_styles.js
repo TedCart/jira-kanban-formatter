@@ -1,5 +1,3 @@
-// import { mainBack, mainFront, specialBack, specialFront } from "./colors.js"
-
 export const addCustomStyleTag = () => {
   const newStyle = document.createElement("style")
   newStyle.setAttribute('type', 'text/css')

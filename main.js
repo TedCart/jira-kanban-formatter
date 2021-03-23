@@ -1,4 +1,3 @@
-// import * as foo from './src/foo.js'
 import  { addCustomStyleTag }         from './src/_styles.js'
 // import  { elementScrollJump }         from './src/_wasd-scroll.js'
 import  { modalBlockId
@@ -311,7 +310,7 @@ function putMutationObserverOnInputList (el, callback) {
   // configuration of the observer:
   const inputElConfig
     = { attributes: true
-      // , characterData: true
+      , characterData: true
       , subtree: true
       }
 
