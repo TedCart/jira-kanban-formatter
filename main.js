@@ -248,13 +248,17 @@ function putMutationObserverOnMainElement (el, callback) {
 
   // configuration of the observer:
   const mainElementConfig
-    = { childList: true
+    = { attributes: true
+      , childList: true
       , subtree: true
       }
 
   // create an observer instance
   const mainElementObserver
-    = new MutationObserver(callback) // end MutationObserver
+    = new MutationObserver((mutations) => {
+        if (mutations.length === 1 && mutations.type === 'attributes' && mutation.attributeName === 'style') return
+        callback()
+      }) // end MutationObserver
 
   // pass in the target node, as well as the observer options
   mainElementObserver.observe(mainElementTarget, mainElementConfig)
