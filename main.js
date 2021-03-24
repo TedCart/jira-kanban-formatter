@@ -256,7 +256,8 @@ function putMutationObserverOnMainElement (el, callback) {
   // create an observer instance
   const mainElementObserver
     = new MutationObserver((mutations) => {
-        if (mutations.length === 1 && mutations.type === 'attributes' && mutation.attributeName === 'style') return
+        // ignore style attribute changes
+        if (mutations.every(m => m.type === 'attributes' && m.attributeName === 'style')) return
         callback()
       }) // end MutationObserver
 
