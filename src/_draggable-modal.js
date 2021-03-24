@@ -292,8 +292,8 @@ export function createCheckboxWithLabel (options) {
   newCheckbox.setAttribute('class',`input-modal-checkbox`)
   newCheckbox.oninput = function(e) {
     this.setAttribute('value', newCheckbox.checked)
+    this.blur()
   }
-  newCheckbox.onfocus = function(e) { this.blur() }
 
   for (const key in options) {
     if (key === 'label') continue
