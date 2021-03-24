@@ -272,13 +272,14 @@ function addCustomModalStyleTag () {
 }
 
 export function createCheckboxWithLabel (options) {
-  // options example:
-  //      { id: "modal-checkbox-example-id"
-  //      , label: "Example Checkbox"
-  //      , checked: true }
+  /*  options example:
+       { id: "modal-checkbox-example-id"
+       , label: "Example Checkbox"
+       , checked: true }
+  */
   options = options || {}
   const modalBlock = getMainModalElement()
-  if (!modalBlock) return
+  if (!modalBlock) return []
 
   let newCheckbox
   if (options && options.id) newCheckbox = modalBlock.querySelector(`#${options.id}`)
@@ -292,6 +293,7 @@ export function createCheckboxWithLabel (options) {
   newCheckbox.oninput = function(e) {
     this.setAttribute('value', newCheckbox.checked)
   }
+  newCheckbox.onfocus = function(e) { this.blur() }
 
   for (const key in options) {
     if (key === 'label') continue
@@ -313,6 +315,41 @@ export function createNewCheckboxListItem (el, options) {
   const newListItem = document.createElement('li')
   const newCheckboxElements = createCheckboxWithLabel(options)
   if (newCheckboxElements.length > 0) {
+    newCheckboxElements.forEach(el => newListItem.append(el))
+    el.append(newListItem)
+  }
+}
+
+export function createSpan (options) {
+  /*  options example:
+       { id: "modal-checkbox-example-id"
+       , label: "Example Checkbox"
+       , checked: true }
+  */
+  options = options || {}
+  const modalBlock = getMainModalElement()
+  if (!modalBlock) return
+
+  let newSpan
+  if (options && options.id) newSpan = modalBlock.querySelector(`#${options.id}`)
+  if (newSpan) {
+    console.log("not creating duplicate span", options.id);
+    return // don't create duplicates
+  }
+  newSpan = document.createElement('span')
+
+  for (const key in options) {
+    newSpan.setAttribute(key, options[key])
+  } // end for loop
+  return newSpan
+}
+
+export function createNewCheckboxListItemWithCount (el, countOptions, checkboxOptions) {
+  const newListItem = document.createElement('li')
+  const newCheckboxElements = createCheckboxWithLabel(checkboxOptions)
+  if (newCheckboxElements.length > 0) {
+    const countElement = createSpan(countOptions)
+    if (countElement) newCheckboxElements.unshift(countElement)
     newCheckboxElements.forEach(el => newListItem.append(el))
     el.append(newListItem)
   }
