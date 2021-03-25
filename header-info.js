@@ -2,7 +2,7 @@
 // @namespace    https://openuserjs.org/users/TedCart
 // @name         Mackey JIRA Kanban formatter
 // @copyright    2020, TedCart (https://openuserjs.org/users/TedCart)
-// @version      1.0
+// @version      1.1
 // @license      MIT
 // @description  Reformat Jira for standup meetings
 // @author       You
