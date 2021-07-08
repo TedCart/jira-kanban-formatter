@@ -223,14 +223,18 @@ function createButtonsToRemoveKanbanSections () {
   buttonList.forEach(button => {
     let buttonContainerDiv = button
     for (let i = 0; i < elementSelector.buttonContainerParentNodeCount; i++) {
-      buttonContainerDiv = button.parentNode
+      buttonContainerDiv = buttonContainerDiv.parentNode
     }
     let newButton = buttonContainerDiv.querySelector(`#${hideButtonAttributes.specialId}`)
     if (!newButton) {
       const newButton = document.createElement('button')
       newButton.id          = hideButtonAttributes.specialId
       newButton.innerHTML   = "Hide Section" // hideButtonAttributes.hideLabel
-      newButton.addEventListener('click', createSectionHiderFunction(buttonContainerDiv))
+      let swimlaneContainerDiv = button
+      for (let i = 0; i < elementSelector.expandCollapseButtonParentNodeCount; i++) {
+        swimlaneContainerDiv = swimlaneContainerDiv.parentNode
+      }
+      newButton.addEventListener('click', createSectionHiderFunction(swimlaneContainerDiv))
       buttonContainerDiv.appendChild(newButton)
     } // end if statement
   })
